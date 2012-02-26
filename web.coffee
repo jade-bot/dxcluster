@@ -3,20 +3,25 @@ require('zappa') ->
   zmqsock = zmq.socket('pull');
   zmqsock.connect('tcp://127.0.0.1:8765')
 
+
   #@set 'view engine': 'hamljs', views: "#{__dirname}/views"
   #@app.register('.haml', require('hamljs'));
   @enable 'serve jquery'
 
-  @on connection: ->
-    @emit welcome: 'ohai there'
+  @on connection: (sock) ->
+    @emit message: 'ohai there'
 
-    zmqsock.on "message", (msg) ->
-      ## this is displaying a log to the console, but not sending
-      ## to the browser via socket.io yet :(
-      ## see http://zappajs.org/docs/crashcourse/
-      ## and http://socket.io/#how-to-use
-      @emit welcome: {spot: msg.toString()}
-      console.log(msg.toString())
+    zmqsock.on "message", (data) ->
+      @emit message: data.toString()
+
+#  zmqsock.on "message", (msg) ->
+    ## this is displaying a log to the console, but not sending
+    ## to the browser via socket.io yet :(
+    ## see http://zappajs.org/docs/crashcourse/
+    ## and http://socket.io/#how-to-use
+#    @emit welcome: {spot: msg.toString()}
+#    console.log(msg.toString())
+  
   
   @get '/': ->
     @render 'index'
@@ -28,8 +33,8 @@ require('zappa') ->
       #alert(@data)
 
     @on message: ->
-      alert(@data)
-      $('#dx_spots').append "<p>#{@data.spot}</p>"
+      #alert(@data)
+      $('#dx_spots').append "<p>#{@data}</p>"
       console.log(@data)
       
 
@@ -47,4 +52,3 @@ require('zappa') ->
         script src: '/index.js'
     body @body
   
-
