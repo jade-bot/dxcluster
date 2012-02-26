@@ -21,6 +21,7 @@ client.on "data", (data) ->
     utc_hour = line.substring(70, 72)
     utc_minute = line.substring(72, 74)
     cluster_data["utc"] = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), utc_hour, utc_minute)
+    
     sock.send(cluster_data.toString())
     console.log cluster_data
 
