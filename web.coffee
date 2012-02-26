@@ -11,17 +11,13 @@ require('zappa') ->
   @on connection: (sock) ->
     @emit message: 'ohai there'
 
-    zmqsock.on "message", (data) ->
-      @emit message: data.toString()
-
-#  zmqsock.on "message", (msg) ->
+  zmqsock.on "message", (data) ->
     ## this is displaying a log to the console, but not sending
     ## to the browser via socket.io yet :(
     ## see http://zappajs.org/docs/crashcourse/
     ## and http://socket.io/#how-to-use
-#    @emit welcome: {spot: msg.toString()}
-#    console.log(msg.toString())
-  
+    @emit welcome: {spot: data.toString()}
+    console.log(data.toString())
   
   @get '/': ->
     @render 'index'
