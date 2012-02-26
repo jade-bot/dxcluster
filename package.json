@@ -1,0 +1,29 @@
+{
+  "name": "DXCluster",
+  "description": "Web-based DX Cluster",
+  "version": "0.0.1",
+  "contributors": [
+    {
+      "name": "Pete Goodhall 2E0SQL",
+      "email": "",
+      "web": ""
+    }
+  ],
+  "maintainers": [
+    {
+      "name": "Graham McIntire W5ISP",
+      "email": "gmcintire@gmail.com",
+      "web": "http://vntx.net"
+    }
+  ],
+  "dependencies": {
+    "zappa": ">=0.3.3",
+    "zmq": ">=2.0.1"
+  },
+  "licenses": [
+    {
+      "name": "MIT",
+      "url": ""
+    }
+  ]
+}
