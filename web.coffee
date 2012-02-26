@@ -1,9 +1,11 @@
-require('haml')
+#require('hamljs')
 require('zappa') ->
+  #@app.register ".haml", require("hamljs")
+  @set 'view engine': 'hamljs', views: "#{__dirname}/views"
+  @app.register('.haml', require('hamljs'));
   @enable 'serve jquery'
   
-  @get '/': ->
-    @render index: {layout: './index.haml'}
+  @get '/': -> @render 'index.haml': {foo: 'bar'}
   
   @on said: ->
     @broadcast said: {nickname: @client.nickname, text: @data.text}

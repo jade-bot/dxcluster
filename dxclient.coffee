@@ -22,8 +22,9 @@ client.on "data", (data) ->
     utc_minute = line.substring(72, 74)
     cluster_data["utc"] = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), utc_hour, utc_minute)
     
-    sock.send(cluster_data.toString())
-    console.log cluster_data
+    final = '{cluster_data["call"]}'
+    sock.send(line)
+    console.log line
 
 client.on "end", ->
   console.log "client disconnected"
