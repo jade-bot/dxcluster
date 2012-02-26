@@ -1,28 +1,50 @@
-#require('hamljs')
 require('zappa') ->
-  #@app.register ".haml", require("hamljs")
-  @set 'view engine': 'hamljs', views: "#{__dirname}/views"
-  @app.register('.haml', require('hamljs'));
+  zmq = require('zmq');
+  zmqsock = zmq.socket('pull');
+  zmqsock.connect('tcp://127.0.0.1:8765')
+
+  #@set 'view engine': 'hamljs', views: "#{__dirname}/views"
+  #@app.register('.haml', require('hamljs'));
   @enable 'serve jquery'
+
+  @on connection: ->
+    @emit welcome: 'ohai there'
+
+    zmqsock.on "message", (msg) ->
+      ## this is displaying a log to the console, but not sending
+      ## to the browser via socket.io yet :(
+      ## see http://zappajs.org/docs/crashcourse/
+      ## and http://socket.io/#how-to-use
+      @emit welcome: {spot: msg.toString()}
+      console.log(msg.toString())
   
-  @get '/': -> @render 'index.haml': {foo: 'bar'}
-  
-  @on said: ->
-    @broadcast said: {nickname: @client.nickname, text: @data.text}
-    @emit said: {nickname: @client.nickname, text: @data.text}
-  
+  @get '/': ->
+    @render 'index'
+
+
   @client '/index.js': ->
     @connect()
+    @on welcome: ->
+      #alert(@data)
 
-    @on said: ->
-      $('#panel').append "<p>#{@data.nickname} said: #{@data.text}</p>"
-    
-    $ =>
-      @emit 'set nickname': {nickname: prompt 'Pick a nickname!'}
+    @on message: ->
+      alert(@data)
+      $('#dx_spots').append "<p>#{@data.spot}</p>"
+      console.log(@data)
       
-      $('#box').focus()
-      
-      $('button').click (e) =>
-        @emit said: {text: $('#box').val()}
-        $('#box').val('').focus()
-        e.preventDefault()
+
+  @view index: ->
+    div '#dx_spots', ''
+  
+  @view layout: ->
+    doctype 5
+    html ->
+      head ->
+        title 'DX Cluster'
+        script src: '/socket.io/socket.io.js'
+        script src: '/zappa/jquery.js'
+        script src: '/zappa/zappa.js'
+        script src: '/index.js'
+    body @body
+  
+
