@@ -9,15 +9,22 @@ var raw_cluster_data;
 var cluster_data = [];
 
 client.on('data', function(data) {
+  now = new Date();
 
   line = data.toString();
   if (line.match(/^DX/)) {
     cluster_data['call'] = /^[a-z0-9\/]*/i.exec(line.substring(6,16))[0];
-    cluster_data['freq'] = /^[0-9\.]*/.exec(line.substring(16,24))[0];
-    cluster_data['dxcall'] = line.substring(26,38);
-    cluster_data['comment'] = line.substring(39,69);
-    cluster_data['utc'] = line.substring(70,74);
+    cluster_data['freq'] = line.substring(16,24).trim();
+    cluster_data['dxcall'] = /^[a-z0-9\/]*/i.exec(line.substring(26,38))[0];
+    cluster_data['comment'] = line.substring(39,69).trim();
+
+    // this sucks, refactor this later
+    utc_hour = line.substring(70,72);
+    utc_minute = line.substring(72,74);
+    cluster_data['utc'] = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), utc_hour, utc_minute);
+
     console.log(cluster_data);
+    // shove in to the queue here
   }
   //client.end();
 });
